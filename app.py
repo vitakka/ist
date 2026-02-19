@@ -274,6 +274,7 @@ def apply_periodic_function(image, function_type, period, direction):
     # Например, если период = 50 пикселей, то функция sin(2π*x/50)
     # будет иметь период 50 пикселей
     x = np.linspace(0, 2 * np.pi * (width / period), width)
+
     y = np.linspace(0, 2 * np.pi * (height / period), height)
 
     # Создаем двумерную сетку координат с помощью meshgrid
