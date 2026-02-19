@@ -1,0 +1,12 @@
+# Секретные ключи
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+….DS_Store
+Thumbs.db
