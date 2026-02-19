@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обработка изображений с reCAPTCHA</title>
+    <!-- Подключение Bootstrap для стилизации -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Подключение скрипта reCAPTCHA от Google (обязательно для работы капчи) -->
+    <script src='https://www.google.com/recaptcha/api.js' async defer></script>
+    <style>
+        /* Кастомные стили для нашего приложения */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding-top: 20px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .upload-form {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Обработка изображений периодическими функциями</h1>
+
+    <!-- Блок для отображения flash-сообщений (ошибки, успехи) -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    {% for category, message in messages %}
+    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+    {% endif %}
+    {% endwith %}
+
+    <!-- Начало формы загрузки изображения -->
+    <div class="upload-form">
+        <form method="POST" enctype="multipart/form-data" id="image-form">
+            <!-- CSRF-токен для защиты от межсайтовой подделки запросов (генерируется Flask-WTF) -->
+            {{ form.hidden_tag() }}
+
+            <!-- Поле для выбора файла изображения -->
+            <div class="form-group mb-3">
+                {{ form.image.label(class="form-label") }}
+                {{ form.image(class="form-control") }}
+                {% if form.image.errors %}
+                {% for error in form.image.errors %}
+                <div class="error-message">{{ error }}</div>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Выбор периодической функции (sin/cos) -->
+            <div class="form-group mb-3">
+                {{ form.function.label(class="form-label") }}
+                {{ form.function(class="form-select") }}
+            </div>
+
+            <!-- Поле для ввода периода изменения -->
+            <div class="form-group mb-3">
+                {{ form.period.label(class="form-label") }}
+                {{ form.period(class="form-control", type="number", step="1", min="1", max="1000") }}
+                {% if form.period.errors %}
+                {% for error in form.period.errors %}
+                <div class="error-message">{{ error }}</div>
+                {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Выбор направления (горизонтальное/вертикальное) -->
+            <div class="form-group mb-3">
+                {{ form.direction.label(class="form-label") }}
+                {{ form.direction(class="form-select") }}
+            </div>
+
+            <!-- КЛЮЧЕВОЙ БЛОК: ПОЛЕ reCAPTCHA -->
+            <!-- Здесь отображается виджет reCAPTCHA "Я не робот" -->
+            <!-- Google автоматически вставляет iframe с капчей -->
+            <div class="form-group mb-3">
+                {{ form.recaptcha }}
+                <!-- Отображение ошибок reCAPTCHA (если пользователь не прошел проверку) -->
+                {% if form.recaptcha.errors %}
+                {% for error in form.recaptcha.errors %}
+                <div class="error-message">{{ error }}</div>
+                {% endfor %}
+                {% endif %}
+                <small class="form-text text-muted">
+                    Поставьте галочку "Я не робот" чтобы подтвердить, что вы человек
+                </small>
+            </div>
+
+            <!-- Кнопка отправки формы -->
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary btn-lg w-100") }}
+            </div>
+        </form>
+    </div>
+    <!-- Конец формы загрузки изображения -->
+
+    <!-- Блок для отображения результатов обработки (показывается только после отправки формы) -->
+    {% if original_image and processed_image %}
+    <div class="alert alert-info">
+        <strong>Параметры обработки:</strong><br>
+        Функция: {{ 'sin' if function_type == 'sin' else 'cos' }} |
+        Период: {{ period }} пикселей |
+        Направление: {{ 'горизонтальное' if direction == 'horizontal' else 'вертикальное' }}
+    </div>
+
+    <div class="row">
+        <!-- Блок с исходным изображением -->
+        <div class="col-md-6">
+            <div class="image-box p-3 border rounded">
+                <h3>Исходное изображение</h3>
+                <!-- Base64-кодированное изображение (изображение встроено прямо в HTML) -->
+                <img src="data:image/png;base64,{{ original_image }}" alt="Original Image" class="img-fluid">
+                <div class="histogram-box mt-3">
+                    <h4>Гистограмма распределения цветов</h4>
+                    <img src="data:image/png;base64,{{ original_histogram }}" alt="Original Histogram" class="img-fluid">
+                </div>
+            </div>
+        </div>
+
+        <!-- Блок с обработанным изображением -->
+        <div class="col-md-6">
+            <div class="image-box p-3 border rounded">
+                <h3>Обработанное изображение</h3>
+                <img src="data:image/png;base64,{{ processed_image }}" alt="Processed Image" class="img-fluid">
+                <div class="histogram-box mt-3">
+                    <h4>Гистограмма распределения цветов</h4>
+                    <img src="data:image/png;base64,{{ processed_histogram }}" alt="Processed Histogram" class="img-fluid">
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Подключение JavaScript Bootstrap -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Опционально: скрипт для улучшения UX с reCAPTCHA -->
+<script>
+    // Этот скрипт можно использовать для кастомного поведения при отправке формы
+    document.getElementById('image-form').addEventListener('submit', function(e) {
+        // Если нужно добавить дополнительную логику перед отправкой
+        // Например, показать индикатор загрузки
+        console.log('Форма отправляется... Проверка reCAPTCHA будет выполнена на сервере.');
+    });
+</script>
+</body>
+</html>
