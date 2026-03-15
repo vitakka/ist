@@ -335,11 +335,11 @@ def apply_periodic_function(image, function_type, period, direction, add_timesta
         # Автоматический выбор шрифта (работает на всех ОС)
         try:
             # Windows
-            font = ImageFont.truetype("arial.ttf", 36)
+            font = ImageFont.truetype("arial.ttf", 42)
         except:
             try:
                 # Linux/Mac
-                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 36)
+                font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 42)
             except:
                 # Резервный вариант
                 font = ImageFont.load_default()
