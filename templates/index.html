@@ -89,6 +89,14 @@
                 {{ form.direction.label(class="form-label") }}
                 {{ form.direction(class="form-select") }}
             </div>
+            <!-- Чекбокс для добавления времени -->
+            <div class="form-group mb-3">
+                {{ form.add_timestamp(class="form-check-input", id="add_timestamp") }}
+                {{ form.add_timestamp.label(class="form-check-label", for="add_timestamp") }}
+                <small class="form-text text-muted">
+                    При включении — время создания будет добавлено в правый нижний угол изображения
+                </small>
+            </div>
 
             <!-- КЛЮЧЕВОЙ БЛОК: ПОЛЕ reCAPTCHA -->
             <!-- Здесь отображается виджет reCAPTCHA "Я не робот" -->
