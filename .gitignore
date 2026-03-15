@@ -8,5 +8,19 @@ __pycache__/
 *.so
 .Python
 venv/
-….DS_Store
+ENV/
+env/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# OS
+.DS_Store
 Thumbs.db
+
+# Uploads (загруженные изображения)
+static/uploads/*
+!static/uploads/.gitkeeptkeep
