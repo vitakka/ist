@@ -89,6 +89,7 @@
                 {{ form.direction.label(class="form-label") }}
                 {{ form.direction(class="form-select") }}
             </div>
+
             <!-- Чекбокс для добавления времени -->
             <div class="form-group mb-3">
                 {{ form.add_timestamp(class="form-check-input", id="add_timestamp") }}
@@ -159,18 +160,5 @@
     </div>
     {% endif %}
 </div>
-
-<!-- Подключение JavaScript Bootstrap -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-
-<!-- Опционально: скрипт для улучшения UX с reCAPTCHA -->
-<script>
-    // Этот скрипт можно использовать для кастомного поведения при отправке формы
-    document.getElementById('image-form').addEventListener('submit', function(e) {
-        // Если нужно добавить дополнительную логику перед отправкой
-        // Например, показать индикатор загрузки
-        console.log('Форма отправляется... Проверка reCAPTCHA будет выполнена на сервере.');
-    });
-</script>
 </body>
 </html>
