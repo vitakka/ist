@@ -328,7 +328,7 @@ def apply_periodic_function(image, function_type, period, direction, add_timesta
     processed_image = Image.fromarray(result)
 
     # ДОБАВЛЕНИЕ ВРЕМЕНИ (только если чекбокс отмечен)
-    if True :#add_timestamp:
+    if add_timestamp:
         draw = ImageDraw.Draw(processed_image)
         timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
