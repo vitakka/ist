@@ -285,12 +285,13 @@ def apply_periodic_function(image, function_type, period, direction, add_timesta
     # Создаем двумерную сетку координат с помощью meshgrid
     if direction == 'horizontal':
         # Горизонтальное направление: функция зависит от координаты x
-        X, _ = np.meshgrid(x, y)  # X - матрица координат x, _ - игнорируем координаты y
-        periodic_func = X
-    else:  # vertical
-        # Вертикальное направление: функция зависит от координаты y
         _, Y = np.meshgrid(x, y)  # Y - матрица координат y
         periodic_func = Y
+    else:  # vertical
+        # Вертикальное направление: функция зависит от координаты y
+        X, _ = np.meshgrid(x, y)  # X - матрица координат x, _ - игнорируем координаты y
+        periodic_func = X
+
 
     # Применяем выбранную периодическую функцию
     if function_type == 'sin':
